@@ -1,0 +1,6 @@
+[
+  {"id":"A-06-02","name":"Collaboration Studio","building":"Block A","floor":"Level 6","capacity":24,"amenities":["Whiteboard","Display","Wi-Fi"],"schedule":[{"date":"2026-11-06","start":"11:00","end":"12:30"},{"date":"2026-11-06","start":"15:00","end":"17:00"}]},
+  {"id":"B-04-03","name":"Learning Room","building":"Block B","floor":"Level 4","capacity":40,"amenities":["Projector","Whiteboard","Wi-Fi"],"schedule":[{"date":"2026-11-06","start":"09:00","end":"10:30"},{"date":"2026-11-06","start":"14:00","end":"16:00"}]},
+  {"id":"A-03-01","name":"Focus Room","building":"Block A","floor":"Level 3","capacity":12,"amenities":["Whiteboard","Wi-Fi"],"schedule":[{"date":"2026-11-06","start":"09:00","end":"12:00"}]},
+  {"id":"TECH-03","name":"Tech Lab 3","building":"Tech Centre","floor":"Level 2","capacity":32,"amenities":["Computers","Projector","Wi-Fi"],"schedule":[{"date":"2026-11-06","start":"14:00","end":"16:00"}]}
+]
