@@ -110,3 +110,21 @@ The replaceable integration point remains `AcademicAssistantAdapter` in `src/ser
 ## Hosting and submission
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for Next.js hosting settings, the production demo test checklist, and the hackathon entry summary.
+
+## Interactive demo controls and chat
+
+Run npm install, then npm run dev; open http://localhost:3000. Validate with npm test, npm run typecheck and npm run build.
+
+The dashboard keeps its original design and adds a 10:45 AM / 1:15 PM clock toggle, a session-only Pod B-03 reservation with .ics download, and a keyboard-accessible architecture dialog. Book the pod at 10:45; it becomes unavailable for overlapping times in Classroom Finder and is excluded from subsequent room answers. Reloading preserves the reservation in this tab; closing the tab ends the session. The later clock disables booking the already-started slot.
+
+The chat UI now calls POST /api/chat. /api/assistant remains compatible. Three quick prompts send immediately. The reusable AcademicAssistantAdapter accepts demo reservation context; mock answers use stored excerpts or availability computed from classroom JSON. The three quick intents are deliberately bounded; other wording uses the existing conservative passage search and may return not found. No LLM, paid API, API key, vector database, or Gemini connection is used. A future server-side Gemini adapter can replace the adapter in src/services/ai/index.ts; it must validate source IDs, return excerpts from stored data, and disclose its actual provider. Enterprise connectors are a separate future integration.
+
+All relative dates refer to 6 November 2026, not your device date. Next week is 9–15 November. Calendar exports use MYT converted to UTC. Reservation, Calendar sync and Chat notification are simulations; only the file download is real.
+
+Manual chat checks:
+- What assignments are due next week? — CS204 (9 November) and CS210 (12 November), with source excerpts.
+- Explain 3NF Normalization from the DB notes — the normalization passage with its reference.
+- Are there free study rooms between 13:00 and 14:00 today? — five rooms before reservation, four afterward, backed by schedule details.
+- Who won the football match? — information not found, without citations.
+
+Open each source, switch tabs and confirm chat history remains. Test the clock badges in both states, open/close the architecture dialog using keyboard and Escape, and inspect the exported event: 6 November 2026, 13:00–14:00 MYT. Proposed integrations in the diagram are explicitly not connected.

@@ -1,9 +1,12 @@
+import { answerDemoAction } from './demo-actions';
 import { documents } from '../../data/academic-documents';
 import type { AcademicAssistantAdapter, AcademicAnswer } from './types';
 import { retrievePassages } from './retrieval';
 /** Extractive search only: answers and citations are copied from stored passages. */
 export class MockAcademicAdapter implements AcademicAssistantAdapter {
-  async answer(question: string): Promise<AcademicAnswer> {
+  async answer(question: string, context?: { podReserved?: boolean }): Promise<AcademicAnswer> {
+    const action = answerDemoAction(question, context?.podReserved);
+    if (action) return action;
     const matches = retrievePassages(question, documents);
     return {
       provider: 'mock',

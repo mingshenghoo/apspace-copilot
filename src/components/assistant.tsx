@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUp, BookOpen, FileText, Sparkles } from 'lucide-react';
 import { documents, exampleQuestions } from '@/data/academic-documents';
+import { quickPrompts } from '@/data/quick-prompts';
 import type { AcademicAnswer } from '@/services/ai/types';
 import { readConversation, SESSION_KEY, type ChatMessage } from '@/lib/conversation';
 
-export function Assistant() {
+export function Assistant({podReserved = false}:{podReserved?:boolean}) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [question, setQuestion] = useState('');
   const [loading, setLoading] = useState(false);
@@ -33,9 +34,9 @@ export function Assistant() {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch('/api/assistant', {
+      const response = await fetch('/api/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: trimmed }), signal: controller.signal,
+        body: JSON.stringify({ question: trimmed, podReserved }), signal: controller.signal,
       });
       if (!response.ok) throw new Error('The document search is unavailable. Please retry your question.');
       const result: AcademicAnswer = await response.json();
@@ -84,7 +85,7 @@ export function Assistant() {
           </article>)}
           {loading && <p className="loading-text" role="status">Searching the demo documents…</p>}
         </div>
-        <div className="chat-input-area">
+        <div className="chat-input-area"><div className="quick-prompts" aria-label="Quick questions">{quickPrompts.map(prompt => <button className="subtle-chip" key={prompt} disabled={!ready || loading} onClick={() => ask(prompt)}>{prompt}</button>)}</div>
           {error && <div className="chat-error"><p role="alert" className="error">{error}</p><button className="text-button" disabled={loading || !retryQuestion} onClick={() => ask(retryQuestion, true)}>Retry last question</button></div>}
           <form onSubmit={event => { event.preventDefault(); ask(question, !!error && question.trim() === retryQuestion); }} className="chat-form">
             <input aria-label="Ask an academic question" aria-describedby="assistant-note" placeholder="What would you like to know?" maxLength={1000} value={question} onChange={event => setQuestion(event.target.value)} disabled={loading || !ready}/>
