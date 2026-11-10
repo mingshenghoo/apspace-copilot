@@ -2,6 +2,8 @@
 
 A demo-ready academic assistant MVP built with Next.js App Router, TypeScript, and Tailwind CSS. This is an independent hackathon prototype, not an official APU application.
 
+**Current integration status:** Optional server-side Gemini API source selection is implemented. Without both server environment variables it uses mock search. See the final setup section below; earlier mock-only walkthroughs describe the original baseline. Gemini Enterprise remains unconnected.
+
 **All student profiles, modules, staff names, policies, rooms, schedules, deadlines, notifications, and progress figures are fictional. Gemini Enterprise is not connected. No APU credentials, APIs, or university systems are used.**
 
 ## Run locally
@@ -68,7 +70,7 @@ tests/domain.test.ts          Availability, export, and source-grounding checks
 
 ## Future Gemini Enterprise integration
 
-Implement `AcademicAssistantAdapter` in a new server-side adapter and select it in `src/services/ai/index.ts`. The UI calls only `/api/assistant`; provider credentials must stay on the server. Preserve the answer text and source contract, and widen the provider type when a real provider is implemented. The current mock adapter searches normalized keywords and aliases within individual passages, quotes matching excerpts, and has no conversational reasoning or network AI calls. Conversation history is for display only; ask each question in full.
+Implement `AcademicAssistantAdapter` in a new server-side adapter and select it in `src/services/ai/index.ts`. The UI calls `/api/chat` (`/api/assistant` remains compatible); provider credentials must stay on the server. Preserve the answer text and source contract, and widen the provider type when a real provider is implemented. The current mock adapter searches normalized keywords and aliases within individual passages, quotes matching excerpts, and has no conversational reasoning or network AI calls. Conversation history is for display only; ask each question in full.
 
 Before connecting real academic data, implement authentication, document access controls, approved data ingestion, provider-specific API handling, rate limits, and source-grounding verification. Obtain appropriate authorization separately; the prototype assumes none. Update the UI connection label only after a real integration is configured and verified.
 
@@ -103,7 +105,7 @@ Try these three supported questions and one unsupported question:
 
 Also try “What classes do I have today?” to inspect the fixed demo timetable. Navigate to Dashboard and back, then refresh: the conversation remains in this tab’s session. **Clear chat** removes it. To test the error/retry state, stop the local server after loading the page and submit a question; restart it and use **Retry last question**. Pending requests show a searching state and time out after 15 seconds.
 
-The replaceable integration point remains `AcademicAssistantAdapter` in `src/services/ai/types.ts`, selected by `src/services/ai/index.ts` and invoked only by `/api/assistant`. A future Gemini Enterprise adapter must run server-side and return verified titles, sections, and excerpts through this contract. Gemini Enterprise is **not connected** in this MVP.
+The replaceable integration point remains `AcademicAssistantAdapter` in `src/services/ai/types.ts`, selected by `src/services/ai/index.ts` and invoked by the server chat routes. A future Gemini Enterprise adapter must run server-side and return verified titles, sections, and excerpts through this contract. Gemini Enterprise is **not connected** in this MVP.
 
 
 
@@ -128,3 +130,13 @@ Manual chat checks:
 - Who won the football match? — information not found, without citations.
 
 Open each source, switch tabs and confirm chat history remains. Test the clock badges in both states, open/close the architecture dialog using keyboard and Escape, and inspect the exported event: 6 November 2026, 13:00–14:00 MYT. Proposed integrations in the diagram are explicitly not connected.
+
+## Optional Gemini API integration
+
+The server now supports Google's @google/genai SDK. Set GEMINI_API_KEY and GEMINI_MODEL in your server environment (local .env.local or Vercel project settings). Both must be set to enable the provider. Never use a NEXT_PUBLIC_ key, commit .env.local, or paste credentials into chat. .env.example contains empty placeholders. Choose a text model available in your AI Studio project; the current documented example is gemini-3.8-flash. No billing or cloud resources are enabled by this code.
+
+Vercel: Settings → Environment Variables → add GEMINI_API_KEY as sensitive for Production and GEMINI_MODEL as the model ID, save, then redeploy. With neither set, the deployed app remains in mock mode. GET /api/chat discloses configuration only, never credentials. A configured badge is not proof of connectivity; a successful response has provider=gemini and its own Gemini label.
+
+Gemini receives the current question, four fictional academic documents and room schedule facts including the session reservation flag. It selects source IDs using structured JSON. The server rejects invalid, duplicate or unknown IDs and renders exact stored excerpts, so model-written dates or citations are never displayed. This is semantic source selection, not free-form generated explanations. Relevant-source selection is still probabilistic and should be evaluated with live questions. Empty selections return not found. Errors/timeouts/invalid IDs fall back to mock search with a visible notice. History is display-only and is not sent to Google.
+
+Tests for Gemini use an injected fake response, with no network calls or credentials. After activation, test all three quick prompts, an unsupported question, the reserved pod exclusion, and the fallback notice. The integration is Gemini Developer API, not Gemini Enterprise or its connectors. Do not enable billing without reviewing project quotas and adding deployment-level abuse controls for a public endpoint.

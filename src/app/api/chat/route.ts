@@ -1,4 +1,7 @@
-import { academicAssistant } from '@/services/ai';
+import { academicAssistant, providerConfigured } from '@/services/ai';
+export async function GET() {
+  return Response.json({ configured: providerConfigured() }, { headers: { 'Cache-Control': 'no-store' } });
+}
 export async function POST(request: Request) {
   let body: unknown;
   try { body = await request.json(); } catch { return Response.json({ error: 'Invalid JSON.' }, { status: 400 }); }

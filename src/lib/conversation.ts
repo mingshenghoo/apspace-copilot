@@ -1,6 +1,6 @@
 import type { Source } from '../services/ai/types';
 export const SESSION_KEY = 'apspace-copilot:academic-chat:v2';
-export interface ChatMessage { role: 'user' | 'assistant'; text: string; sources?: Source[] }
+export interface ChatMessage { role: 'user' | 'assistant'; text: string; sources?: Source[]; provider?: 'mock' | 'gemini'; notice?: string }
 function isSource(value: unknown): value is Source {
   if (!value || typeof value !== 'object') return false;
   const source = value as Record<string, unknown>;
@@ -12,6 +12,6 @@ export function readConversation(raw: string | null): ChatMessage[] {
   try {
     const value: unknown = JSON.parse(raw);
     if (!Array.isArray(value)) return [];
-    return value.filter((entry): entry is ChatMessage => entry && (entry.role === 'user' || entry.role === 'assistant') && typeof entry.text === 'string' && (entry.sources === undefined || (Array.isArray(entry.sources) && entry.sources.every(isSource))));
+    return value.filter((entry): entry is ChatMessage => entry && (entry.role === 'user' || entry.role === 'assistant') && typeof entry.text === 'string' && (entry.provider === undefined || entry.provider === 'mock' || entry.provider === 'gemini') && (entry.notice === undefined || typeof entry.notice === 'string') && (entry.sources === undefined || (Array.isArray(entry.sources) && entry.sources.every(isSource))));
   } catch { return []; }
 }
