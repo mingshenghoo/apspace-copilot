@@ -31,3 +31,11 @@ test('Gemini reference shelf includes all documents and server-computed reservat
   assert.match(free.find(source => source.id === 'rooms/B-03')!.excerpt, /Availability for 13:00–14:00: available/);
   assert.match(referenceShelf(true).find(source => source.id === 'rooms/B-03')!.excerpt, /Availability for 13:00–14:00: unavailable/);
 });
+
+import { providerFailureNotice } from '../src/services/ai/provider-error';
+test('provider failures expose only fixed safe diagnostic messages', () => {
+  assert.match(providerFailureNotice({status:404,message:'secret'}), /model was not found/);
+  assert.match(providerFailureNotice({status:429}), /quota/);
+  assert.match(providerFailureNotice({status:403}), /access was denied/);
+  assert.ok(!providerFailureNotice(new Error('secret API key')).includes('secret'));
+});
