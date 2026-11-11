@@ -5,7 +5,7 @@ export function providerFailureNotice(error: unknown): string {
     : status === 401 || status === 403 ? 'Gemini access was denied. Check the API key and project permissions.'
     : status === 404 ? 'The configured Gemini model was not found or is not available to this project.'
     : status === 429 ? 'Gemini quota or rate limit was reached. Check the project’s available quota.'
-    : typeof status === 'number' && status >= 500 ? 'Google’s Gemini service is temporarily unavailable.'
+    : typeof status === 'number' && Number.isInteger(status) && status >= 500 && status <= 599 ? `Google’s Gemini service returned HTTP ${status}.`
     : 'Gemini timed out, could not be reached, or returned invalid source references.';
   return `${reason} This answer uses mock document search.`;
 }
