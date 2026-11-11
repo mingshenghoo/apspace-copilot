@@ -10,6 +10,8 @@ type Tab = 'Dashboard' | 'Academic Assistant' | 'Classroom Finder';
 const nav = [{title:'Dashboard' as Tab, icon:LayoutDashboard},{title:'Academic Assistant' as Tab,icon:Sparkles},{title:'Classroom Finder' as Tab,icon:MapPin}];
 export function CopilotApp() {
   const [tab,setTab] = useState<Tab>('Dashboard'); const [menu,setMenu]=useState(false); const [showNotices,setShowNotices]=useState(false);
+  // Views share one URL, so reset the document scroll after the selected view renders.
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); }, [tab]);
   const [afternoon, setAfternoon] = useState(false);
   const [podReserved, setPodReserved] = useState(false);
   const [bookingReady, setBookingReady] = useState(false);
