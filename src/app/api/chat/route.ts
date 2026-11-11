@@ -1,4 +1,5 @@
 import { academicAssistant, providerConfigured } from '@/services/ai';
+export const maxDuration = 60;
 export async function GET() {
   return Response.json({ configured: providerConfigured() }, { headers: { 'Cache-Control': 'no-store' } });
 }

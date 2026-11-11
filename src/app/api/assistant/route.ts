@@ -1,4 +1,5 @@
 import { academicAssistant } from '@/services/ai';
+export const maxDuration = 60;
 export async function POST(request: Request) {
   let body: unknown;
   try { body = await request.json(); } catch { return Response.json({ error: 'Invalid JSON.' }, { status: 400 }); }

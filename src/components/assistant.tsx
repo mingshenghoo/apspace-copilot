@@ -34,7 +34,7 @@ export function Assistant({podReserved = false}:{podReserved?:boolean}) {
     busy.current = true; setLoading(true); setError(''); setQuestion('');
     if (!retry) setMessages(previous => [...previous, { role: 'user', text: trimmed }]);
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 20000);
+    const timer = setTimeout(() => controller.abort(), 45000);
     try {
       const response = await fetch('/api/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
